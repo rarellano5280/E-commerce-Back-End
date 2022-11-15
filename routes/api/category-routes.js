@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const { Category, Product } = require('../../models');
+const { update } = require('../../models/Product');
 
 // The `/api/categories` endpoint
 // find all categories
@@ -38,12 +39,40 @@ try {
 }
 });
 
-router.put('/:id', (req, res) => {
   // update a category by its `id` value
+router.put('/:id', async (req, res) => {
+  try {
+    const updateCategory = await Category.update(req.body, {
+      where: {
+        id: req.params.id,
+      },
+    });
+    if (!updateCategory[0]) {
+      res.status(404).json({ message:'No user with this ID!'})
+      return;
+    }
+    res.status(200).json(updateCategory);
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 
-router.delete('/:id', (req, res) => {
-  // delete a category by its `id` value
+// delete a category by its `id` value
+router.delete('/:id', async (req, res) => {
+  try {
+    const deleteCategory = await Category.destroy({
+      where: {
+        id: req.params.id,
+      },
+    });
+    if (!deleteCategory) {
+      res.status(404).json({ message: 'No user with this ID!'});
+      return;
+    }
+    res.status(200).json ({ message: 'No user with this ID!'});
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 
 module.exports = router;
