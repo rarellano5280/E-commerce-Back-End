@@ -105,21 +105,21 @@ router.put('/:id', (req, res) => {
 });
 
 // delete one product by its `id` value
-router.delete('/:id', async (req, res) => {
-  try {
-    const deleteProduct = await Product.destroy({
-      where: {
-        id: req.params.id,
-      },
-    });
-    if (!deleteProduct) {
+router.delete('/:id', (req, res) => {
+  Product.destroy({
+    where: {
+      id: req.params.id
+    }
+  }).then(deletedProduct => {
+    if(!deletedProduct) {
       res.status(404).json({ message: 'No product with that ID!'});
       return;
     }
-    res.status(200).json (deleteProduct);
-  } catch (err) {
+    res.json(deletedProduct);
+  }).catch (err => {
+    console.log(err);
     res.status(500).json(err);
-  }
+  });
   // delete a category by its `id` value
 });
 
