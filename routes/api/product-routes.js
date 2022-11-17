@@ -62,7 +62,6 @@ router.post('/', (req, res) => {
     });
 });
 
-// update product
 router.put('/:id', (req, res) => {
   // update product data
   Product.update(req.body, {
@@ -105,21 +104,37 @@ router.put('/:id', (req, res) => {
 });
 
 // delete one product by its `id` value
-router.delete('/:id', (req, res) => {
-  Product.destroy({
-    where: {
-      id: req.params.id
-    }
-  }).then(deletedProduct => {
-    if(!deletedProduct) {
+router.delete('/:id', async (req, res) => {
+  try {
+    const deleteProduct = await Product.destroy({
+      where: {
+        id: req.params.id,
+      },
+    });
+    if (!deleteProduct) {
       res.status(404).json({ message: 'No product with that ID!'});
       return;
     }
-    res.json(deletedProduct);
-  }).catch (err => {
-    console.log(err);
+    res.status(200).json (deleteProduct);
+  } catch (err) {
     res.status(500).json(err);
-  });
+  }
+
+
+  // Product.destroy({
+  //   where: {
+  //     id: req.params.id
+  //   }
+  // }).then(productData => {
+  //   if(!productData) {
+  //     res.status(404).json({ message: 'No product with that ID!'});
+  //     return;
+  //   }
+  //   res.json(productData);
+  // }).catch (err => {
+  //   console.log(err);
+  //   res.status(500).json(err);
+  // });
   // delete a category by its `id` value
 });
 
